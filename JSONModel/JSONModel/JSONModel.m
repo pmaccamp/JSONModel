@@ -903,17 +903,18 @@ static JSONKeyMapper* globalKeyMapper = nil;
     
     //inspect next level
     NSString* nextHierarchyLevelKeyName = [keyPath substringToIndex: dotLocation];
-    NSDictionary* nextLevelDictionary = (*dict)[nextHierarchyLevelKeyName];
+    NSMutableDictionary* nextLevelDictionary = (*dict)[nextHierarchyLevelKeyName];
 
     if (nextLevelDictionary==nil) {
         //create non-existing next level here
-        nextLevelDictionary = [NSMutableDictionary dictionary];
+        nextLevelDictionary = [NSMutableDictionary new];
+    } else if(![nextLevelDictionary isMemberOfClass:[NSMutableDictionary class]]){
+        nextLevelDictionary = [nextLevelDictionary mutableCopy];
     }
     
     //recurse levels
     [self __createDictionariesForKeyPath:[keyPath substringFromIndex: dotLocation+1]
                             inDictionary:&nextLevelDictionary ];
-    
     //create the hierarchy level
     [*dict setValue:nextLevelDictionary  forKeyPath: nextHierarchyLevelKeyName];
 }
